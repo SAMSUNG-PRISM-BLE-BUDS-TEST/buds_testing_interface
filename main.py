@@ -1,6 +1,7 @@
-from flask import Flask, render_template, redirect, url_for,jsonify
+from flask import Flask, render_template, redirect, url_for,jsonify, send_file
 from mobile_automate import * 
 from datetime import datetime
+from fpdf import FPDF
 
 app = Flask(__name__)
 #change paniko da
@@ -175,8 +176,29 @@ def event_log():
         eventar=le
     else:
         eventar=[[" ","NO EVENTS YET"]]
-        pass
-    return render_template("event_log.html",le=eventar)
     
+    data = eventar
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    col_widths = [60, 90, 40]
+    # Create table header
+    for i, col in enumerate(data[0]):
+        pdf.cell(col_widths[i], 10, col, 1)
+    pdf.ln()
+    for row in data[1:]:
+        for i, col in enumerate(row):
+            pdf.cell(col_widths[i], 10, str(col), 1)
+        pdf.ln()
+    pdf.output('log_file.pdf')
+    
+    return render_template("event_log.html",le=eventar)
+ 
+ 
+@app.route('/download_log_file')
+def download_log_file():
+    # Serve the PDF file for download
+    return send_file('log_file.pdf', as_attachment=True)
+
 if __name__ == '__main__':
     app.run(debug=True)  

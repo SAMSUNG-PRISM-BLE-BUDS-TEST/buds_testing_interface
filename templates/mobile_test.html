@@ -1,0 +1,63 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mobile testing</title>
+    <link rel="stylesheet" href="{{url_for("static",filename="style.css")}}">
+</head>
+<body>
+    <div class="song" >
+        <p >CURRENT SONG : {{sn}}</p>
+        <p >SONG STATUS : {{ss}}</p>
+        <p >CURRENT VOLUME : {{volume}}</p>
+    </div>
+
+    <div class="tchctc">
+    <div class="tch later">
+        <p class=" touch">WILL BE IMPLEMENTED LATER ..... </p>
+        <p style="margin:auto;font-weight: bolder;font-size: larger;padding:5px;">TOUCH CONTROLS</p>
+        <p style="background-color: {{stbg}}; color:{{stc}};padding:10px;border-radius: 10px;text-align: center;">SINGLE TAP : {{stw}}</p> 
+        <p style="background-color: {{dtbg}}; color:{{dtc}};padding:10px;border-radius: 10px;text-align: center;">DOUBLE TAP : {{dtw}}</p>
+        <p style="background-color: {{ttbg}}; color:{{ttc}};padding:10px;border-radius: 10px;text-align: center;">TRIPPLE TAP : {{ttw}}</p>
+        <form action="{{ url_for('touchtest') }}" method="post">
+            <button type="submit">START TOUCH TESTING</button>
+        </form>
+    </div>
+    
+    <div class="tch">
+        <p style="margin:auto;font-weight: bolder;font-size: larger;">CALL STATUS</p>
+        <p style="background-color: {{callclr}}; color:{{calltxt}};padding:10px;border-radius: 10px;text-align: center;">CALL STATUS: {{callsts}}</p> 
+    </div></div>
+    <a href="{{ url_for('event_log') }}">SEE EVENT LOGS</a>
+</body>
+
+<script>
+    let currentStatus = null;
+    let currentSongName = null;
+    let currentvolume= null;
+    let currentcall= null;
+    function checkMetadata() {
+        fetch('/get_metadata_value')
+            .then(response => response.json())
+            .then(data => {
+                const newStatus = data.status;
+                const newvolume =data.volume;
+                const newSongName = data.song_name;
+                const newcall = data.calls;
+                if (currentStatus === null && currentSongName === null && currentvolume === null && currentcall == null) {
+                    currentStatus = newStatus;
+                    currentSongName = newSongName;
+                    currentvolume = newvolume;
+                    currentcall = newcall;
+                } 
+                else if (newStatus !== currentStatus || newSongName !== currentSongName || newvolume != currentvolume || newcall != currentcall) {
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+
+    setInterval(checkMetadata, 100);
+</script>
+</html>

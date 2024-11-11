@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAMSUNG BUDS TESTING</title>
+    <link rel="stylesheet" href="{{url_for("static",filename="style.css")}}">
+</head>
+<body>
+    <div class="ble" >
+        <p style="background-color:{{bgclr}};">BUDS CONNECTION STATUS : {{sts}}</p>
+        <form action="{{ url_for('test') }}" method="post">
+            <button type="submit">START TESTING</button>
+        </form>
+    </div>
+    
+    
+</body>
+
+
+<script>
+    let connectstate = null;
+function checkconnection() {
+    fetch('/get_connection_value')
+        .then(response => response.json())
+        .then(data => {
+            const newStatus = data.status;
+            if (connectstate === null) {
+                connectstate = newStatus;
+            } 
+            else if (newStatus !== connectstate) {
+                window.location.reload();
+                console.log("hello");
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+// Poll the server every 5 seconds
+setInterval(checkconnection, 5000);
+</script>
+
+</html>

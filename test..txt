@@ -1,0 +1,10 @@
+TO DO
+
+ble status update
+later css opacity change
+call block update
+media controls update
+github update
+create folder
+audio play from folder
+touch controls update

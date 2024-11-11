@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <p class="evhd">EVENT LOGS</p>
+    
+    <div class="msgd">
+        <table class="evt">
+            <tr>
+                <th>TIMESTAMP</th>
+                <th>MESSAGE</th>
+            </tr>
+            {%for i in le%}
+            <tr>
+                <td>{{i[0]}}</td>
+                <td>{{i[1]}}</td>
+            </tr>
+            {%endfor%}
+        </table>
+    </div>
+    <a class="dbt" href="">DOWNLOAD LOG FILE</a>
+
+    <!-- <button class="dbtn">DOWNLOAD LOG FILE</button> -->
+</body>
+
+<script>
+    let currentStatus = null;
+    let currentSongName = null;
+    let currentvolume= null;
+    let currentcall= null;
+    function checkMetadata() {
+        fetch('/get_metadata_value')
+            .then(response => response.json())
+            .then(data => {
+                const newStatus = data.status;
+                const newvolume =data.volume;
+                const newSongName = data.song_name;
+                const newcall = data.calls;
+                if (currentStatus === null && currentSongName === null && currentvolume === null && currentcall == null) {
+                    currentStatus = newStatus;
+                    currentSongName = newSongName;
+                    currentvolume = newvolume;
+                    currentcall = newcall;
+                } 
+                else if (newStatus !== currentStatus || newSongName !== currentSongName || newvolume != currentvolume || newcall != currentcall) {
+                    currentStatus = newStatus;
+                    currentSongName = newSongName;
+                    currentvolume = newvolume;
+                    currentcall = newcall;
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+// Poll the server every 5 seconds
+setInterval(checkle, 1000);
+</html>

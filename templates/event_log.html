@@ -4,9 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="{{url_for("static",filename="style.css")}}">
 </head>
 <body>
+    <div class="apbr">
+        <a href="" onclick="minimizeApp()">&#128469;&#xFE0E; </a>
+        <a href="" onclick="maximizeApp()">&#128471;&#xFE0E; </a>
+        <a href="" onclick="closeApp()"> &#128473;&#xFE0E;</a>
+    </div>
+    <div class="topbar">
+        <a href="">HOME</a>
+        <a href="">AUDIO QUALITY</a>
+        <a href="">RECORD EVENT</a>
+    </div>
     <p class="evhd">EVENT LOGS</p>
     
     <div class="msgd">
@@ -28,7 +38,7 @@
     <!-- <button class="dbtn">DOWNLOAD LOG FILE</button> -->
 </body>
 
-<script>
+<script >
     let currentStatus = null;
     let currentSongName = null;
     let currentvolume= null;
@@ -59,4 +69,15 @@
     }
 // Poll the server every 5 seconds
 setInterval(checkle, 1000);
+function closeApp() {
+    window.pywebview.api.close_window();
+}
+
+function minimizeApp() {
+    window.pywebview.api.minimize_window();
+}
+
+function maximizeApp() {
+    window.pywebview.api.maximize_window();
+}
 </html>

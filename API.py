@@ -12,7 +12,8 @@ RECORDING_FILE1 = "recording1.wav"
 RECORDING_FILE2 = "recording2.wav"
 FREQUENCY = 16000
 CHANNELS = 2
-
+request= {"duration": 10,"device1_name": "Microphone (USB PnP Sound Device)","device2_name": "Microphone 1 (Realtek HD Audio Mic input with SST)" }
+    
 # Default weights for MOS calculation
 default_weights = {'snr': 0.2,'thd': 0.25,'frd': 0.15,'loudness': 0.2,'sharpness': 0.2}
 
@@ -125,7 +126,7 @@ def get_device_index() -> dict:
 @app.route('/record', methods=['POST'])
 def record():
     """Record audio from two devices"""
-    data = request.json
+    data = {"duration": 10,"device1_name": "Microphone (USB PnP Sound Device)","device2_name": "Microphone 1 (Realtek HD Audio Mic input with SST)" }
     duration = data['duration']
     device1_name = data['device1_name']
     device2_name = data['device2_name']
@@ -197,3 +198,6 @@ def devices():
     device_indices = get_device_index()
     return jsonify(device_indices), 200
 
+if __name__ == '__main__':
+    app.run(debug=True, use_reloader=False)
+    

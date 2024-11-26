@@ -6,6 +6,16 @@
     <link rel="stylesheet" href="{{url_for("static",filename="style.css")}}">
 </head>
 <body>
+    <div class="apbr">
+        <a href="" onclick="minimizeApp()">&#128469;&#xFE0E; </a>
+        <a href="" onclick="maximizeApp()">&#128471;&#xFE0E; </a>
+        <a href="" onclick="closeApp()"> &#128473;&#xFE0E;</a>
+    </div>
+    <div class="topbar">
+        <a href="">HOME</a>
+        <a href="">AUDIO QUALITY</a>
+        <a href="">RECORD EVENT</a>
+    </div>
     <div class="ble" >
         <p style="background-color:{{bgclr}};">BUDS CONNECTION STATUS : {{sts}}</p>
         <form action="{{ url_for('test') }}" method="post">
@@ -17,7 +27,7 @@
 </body>
 
 
-<script>
+<script src="{{ url_for('static', filename='script.js') }}">
     let connectstate = null;
 function checkconnection() {
     fetch('/get_connection_value')
@@ -37,6 +47,7 @@ function checkconnection() {
 
 // Poll the server every 5 seconds
 setInterval(checkconnection, 5000);
+
 </script>
 
 </html>

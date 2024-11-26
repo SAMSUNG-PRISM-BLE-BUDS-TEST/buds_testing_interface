@@ -126,3 +126,180 @@ td,th{
     right:50%;
     width: max-content;
 }
+
+.seln{
+    text-decoration: none;
+    color: white;
+    background-color: green;
+    padding:20px;
+    border-radius: 20px;
+    position:absolute;
+    bottom:10px;
+    left:50%;
+    transform: translateX(-50%);
+}
+
+.topbar{
+background-color: darkslateblue;
+height:50px;
+width:100%;
+margin:1px -5px ;
+border-radius: 10px;
+display: flex;
+align-items: center;
+justify-content: space-evenly;
+}
+
+.topbar>a{
+    color: white;
+    font-family: K2D;
+    text-decoration: none;
+    font-size: large;
+}
+
+.topbar>a:hover{
+    color: black;
+   background-color: white;
+   padding:10px;
+   border-radius: 10px;
+   transition: 500ms;
+}
+
+.apbr{
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 25px;
+    width:100vw;
+    margin-left: -5px;  
+    margin-top: -5px;
+}
+
+.apbr>a{
+    color:white;
+    text-decoration: none;
+    font-size: large;
+    margin:10px;
+}
+
+.adevc{
+    display:flex;
+    gap:20px;
+    align-items: center;
+    justify-content: space-around;
+    width:80%;
+    margin:5px auto;
+    height:max-content;
+}
+
+.avadev{
+    background-color: white;
+    font-size: medium;
+    width:50%;
+    padding:5px;
+    min-height: 400px;
+    overflow-y: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;
+    border-radius: 10px;
+    border:1px solid grey;
+}
+.afm{
+    min-height: 400px;
+    background-color: grey;
+    padding:10px;
+}
+.afm,.afm>form{
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.afm>form>input{
+    border:1px solid grey;
+    height:30px;
+    border-radius:10px;
+    width:250px;
+    margin:10px;
+    padding:3px 10px;
+}
+
+
+.dbtn>button{
+    background-color: green;
+    color:white;
+    font-size: medium;
+border-radius: 3px;
+/* border:2px solid green; */
+}
+
+.cmet,.backbtn{
+    text-decoration: none;
+font-size: larger;
+font-family: K2D;
+color:white;
+background-color: darkslateblue;
+padding: 3px 10px;
+border-radius: 20px;
+margin:8px auto;
+display:block;
+width:fit-content;
+text-align: center;
+}
+
+.mtrc{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.tm{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start ;
+    flex-direction: column;
+    /* background-color: grey; */
+    border: 2px double black;   
+    width:40%;
+    height:400px;
+    margin:20px;
+    border-radius: 20px;
+}
+
+
+
+.tm>ul {
+    list-style: none;
+    display: table;
+  }
+  
+.tm>ul>li {
+    display: table-row;
+    font-size: large;
+    font-family: K2D;
+  }
+  
+  .tm>ul>li>span {
+    display: table-cell;
+    padding-right: 1em;
+  }
+
+  .tm>a{
+    text-decoration: none;
+    color:white;
+        background-color: blue;
+        padding:10px 20px;
+        border-radius: 20px;
+        font-size: medium;
+        font-family: K2D;
+  }
+
+  .ermg{
+    text-align: center;
+    background-color: rgb(138, 161, 4);
+    color:white;
+    font-size: larger;
+  }

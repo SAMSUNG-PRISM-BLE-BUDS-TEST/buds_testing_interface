@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{url_for("static",filename="style.css")}}">
+</head>
+<body>
+    <div class="apbr">
+        <a href="" onclick="minimizeApp()">&#128469;&#xFE0E; </a>
+        <a href="" onclick="maximizeApp()">&#128471;&#xFE0E; </a>
+        <a href="" onclick="closeApp()"> &#128473;&#xFE0E;</a>
+    </div>
+    <div class="topbar">
+        <a href="">HOME</a>
+        <a href="">AUDIO QUALITY</a>
+        <a href="">RECORD EVENT</a>
+    </div>
+    
+        <p style="text-align: center;font-size: x-large;font-weight: 200;">CALCULATED METRICS</p>
+        <div class="mtrc">
+            <div class="lf tm">
+                <h2 style="text-align: center;font-family: K2D;">LEFT EAR BUD</h2>
+                <hr style="background-color:black;width:100%;">
+                <ul>
+                    <li><span>Signal-to-Noise Ratio (SNR)</span>           :  {{}} dB </li>
+                    <li><span>Total Harmonic Distortion (THD)</span>       :  {{}} dB  </li>
+                    <li><span>Frequency Response Deviation (FRD)</span>    :  {{}}</li>
+                    <li><span>loudness</span>                              :  {{}} dB</li>
+                    <li><span>sharpness</span>                             :  {{}}</li>
+                    <li><span>Mean Opinion Score (MOS)</span>              :  {{}}</li>
+                </ul>
+                <a href="">DOWNLOAD LEFT.wav</a>
+            </div>
+            <div class="rg tm">
+                <h2 style="text-align: center;font-family: K2D;">RIGHT EAR BUD</h2>
+                <hr style="background-color:black;width:100%;">
+                <ul>
+                    <li><span>Signal-to-Noise Ratio (SNR)</span>           :  {{}} dB </li>
+                    <li><span>Total Harmonic Distortion (THD)</span>       :  {{}} dB  </li>
+                    <li><span>Frequency Response Deviation (FRD)</span>    :  {{}}</li>
+                    <li><span>loudness</span>                              :  {{}} dB</li>
+                    <li><span>sharpness</span>                             :  {{}}</li>
+                    <li><span>Mean Opinion Score (MOS)</span>              :  {{}}</li>
+                </ul>
+                <a href="">DOWNLOAD RIGHT.wav</a>
+            </div>
+        </div>
+    <a href="" class="backbtn">BACK</a>
+
+</body>
+<script src="static/script.js"></script>
+</html>

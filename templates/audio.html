@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="{{url_for("static",filename="style.css")}}">
 </head>
 <body>
     <div class="apbr">
@@ -18,12 +18,14 @@
         <a href="">RECORD EVENT</a>
     </div>
     <div class="ermg">
-        DEVICE NOT FOUND
+        {% if erf%}
+        {{erf}}
+        {% endif %}
     </div>
     <div class="adevc">
         <div class="avadev">
             <p style="font-size: large;text-align: center;font-weight: bold;">AVAILABLE DEVICES</p>  
-            {{}}
+            {{devices}}
         </div>
 
            <div class="afm">
@@ -37,13 +39,38 @@
                     <input name="ch2" type="number" min="1" max="2" value="2" placeholder="ENTER CHANNEL 2 STYLE">
                 </form>
                 <div class="dbtn">
-                    <button type="button" onclick="" >&#9679; RECORD AUDIO</button>
+                    <button type="button" onclick="submitForm()" >&#9679; RECORD AUDIO</button>
                 <button>&#9658; PLAY AUDIO</button>
                 </div>
            </div>
         </div>
-        <a href="" class="cmet">CALCULATE METRICS</a>
+        <a href="url_for('record')" class="cmet">CALCULATE METRICS</a>
 
 </body>
-   
+    <script>
+        function closeApp() {
+            window.pywebview.api.close_window();
+        }
+        
+        function minimizeApp() {
+            window.pywebview.api.minimize_window();
+        }
+        
+        function maximizeApp() {
+            window.pywebview.api.maximize_window();
+        }
+
+        async function submitForm() {
+            const formData = {
+                device1_name: document.getElementById('device1').value,
+                device2_name: document.getElementById('device2').value,
+                duration: document.getElementById('duration').value,
+                frequency1: document.getElementById('freq1').value,
+                frequency2: document.getElementById('freq2').value,
+                channels1: document.getElementById('ch1').value,
+                channels2: document.getElementById('ch2').value
+            };
+
+        }
+    </script>
 </html>

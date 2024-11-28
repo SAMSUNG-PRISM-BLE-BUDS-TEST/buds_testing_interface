@@ -13,9 +13,9 @@
         <a href="" onclick="closeApp()"> &#128473;&#xFE0E;</a>
     </div>
     <div class="topbar">
-        <a href="">HOME</a>
-        <a href="">AUDIO QUALITY</a>
-        <a href="">RECORD EVENT</a>
+        <a href="{{url_for('home')}}">HOME</a>
+        <a href="{{url_for('audio')}}">AUDIO QUALITY</a>
+        <a href="{{url_for('event_log')}}">RECORD EVENT</a>
     </div>
     <div class="ermg">
         {% if erf%}
@@ -25,26 +25,31 @@
     <div class="adevc">
         <div class="avadev">
             <p style="font-size: large;text-align: center;font-weight: bold;">AVAILABLE DEVICES</p>  
-            {{devices}}
+            <ul>
+                {% for device in devices %}
+                <li>{{ device['name'] }}</li>
+                {% endfor %}
+            </ul>
+            
         </div>
 
            <div class="afm">
-                <form>
-                    <input name="duration" type="number" min="1" value="" placeholder="ENTER DURATION * " required>
-                    <input name="device1" type="text" value="" placeholder="ENTER DEVICE 1 *" required>
-                    <input name="device2" type="text" value="" placeholder="ENTER DEVICE 2 *" required>
-                    <input name="freq1" type="number" value="16000" placeholder="ENTER FREQUENCY 1">
-                    <input name="freq2" type="number" value="16000" placeholder="ENTER FREQUENCY 2">
-                    <input name="ch1" type="number" min="1" max="2" value="2" placeholder="ENTER CHANNEL 1 STYLE">
-                    <input name="ch2" type="number" min="1" max="2" value="2" placeholder="ENTER CHANNEL 2 STYLE">
+                <form id="audioForm">
+                    <input id="duration" name="duration" type="number" min="1" value="" placeholder="ENTER DURATION * " required>
+                    <input id="device1" name="device1" type="text" value="" placeholder="ENTER DEVICE 1 *" required>
+                    <input id="device2" name="device2" type="text" value="" placeholder="ENTER DEVICE 2 *" required>
+                    <input id="freq1" name="freq1" type="number" value="16000" placeholder="ENTER FREQUENCY 1">
+                    <input id="freq2" name="freq2" type="number" value="16000" placeholder="ENTER FREQUENCY 2">
+                    <input id="ch1" name="ch1" type="number" min="1" max="2" value="2" placeholder="ENTER CHANNEL 1 STYLE">
+                    <input id="ch2" name="ch2" type="number" min="1" max="2" value="2" placeholder="ENTER CHANNEL 2 STYLE">
                 </form>
                 <div class="dbtn">
-                    <button type="button" onclick="submitForm()" >&#9679; RECORD AUDIO</button>
-                <button>&#9658; PLAY AUDIO</button>
+                    <button type="button" onclick="submitForm()">&#9679; RECORD AUDIO</button>
+                    <button>&#9658; PLAY AUDIO</button>
                 </div>
            </div>
         </div>
-        <a href="url_for('record')" class="cmet">CALCULATE METRICS</a>
+        <a href="{{url_for('metrics')}}" class="cmet">CALCULATE METRICS</a>
 
 </body>
     <script>
@@ -71,6 +76,25 @@
                 channels2: document.getElementById('ch2').value
             };
 
-        }
+            try {
+                const response = await fetch('/record', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert(result.message); // Success
+                } else {
+                    alert(result.error || 'Recording failed.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Network error or server issue.');
+            }
+            
+        
     </script>
 </html>

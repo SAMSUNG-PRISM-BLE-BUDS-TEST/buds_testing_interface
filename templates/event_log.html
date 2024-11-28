@@ -13,9 +13,9 @@
         <a href="" onclick="closeApp()"> &#128473;&#xFE0E;</a>
     </div>
     <div class="topbar">
-        <a href="">HOME</a>
-        <a href="">AUDIO QUALITY</a>
-        <a href="">RECORD EVENT</a>
+        <a href="{{url_for('home')}}">HOME</a>
+        <a href="{{url_for('audio')}}">AUDIO QUALITY</a>
+        <a href="{{url_for('event_log')}}">RECORD EVENT</a>
     </div>
     <p class="evhd">EVENT LOGS</p>
     
@@ -39,11 +39,12 @@
 </body>
 
 <script >
-    let currentStatus = null;
     let currentSongName = null;
     let currentvolume= null;
     let currentcall= null;
+    let currentStatus = null; 
     function checkMetadata() {
+        console.log("hello");
         fetch('/get_metadata_value')
             .then(response => response.json())
             .then(data => {
@@ -58,17 +59,17 @@
                     currentcall = newcall;
                 } 
                 else if (newStatus !== currentStatus || newSongName !== currentSongName || newvolume != currentvolume || newcall != currentcall) {
-                    currentStatus = newStatus;
-                    currentSongName = newSongName;
-                    currentvolume = newvolume;
-                    currentcall = newcall;
                     location.reload();
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to fetch metadata. Please try again later.');
+            });
     }
-// Poll the server every 5 seconds
-setInterval(checkle, 1000);
+
+    setInterval(checkMetadata, 1000);
+
 function closeApp() {
     window.pywebview.api.close_window();
 }
@@ -80,4 +81,5 @@ function minimizeApp() {
 function maximizeApp() {
     window.pywebview.api.maximize_window();
 }
+</script>
 </html>

@@ -13,9 +13,9 @@
         <a href="" onclick="closeApp()"> &#128473;&#xFE0E;</a>
     </div>
     <div class="topbar">
-        <a href="">HOME</a>
-        <a href="">AUDIO QUALITY</a>
-        <a href="">RECORD EVENT</a>
+        <a href="{{url_for('home')}}">HOME</a>
+        <a href="{{url_for('audio')}}">AUDIO QUALITY</a>
+        <a href="{{url_for('event_log')}}">RECORD EVENT</a>
     </div>
     
         <p style="text-align: center;font-size: x-large;font-weight: 200;">CALCULATED METRICS</p>
@@ -24,30 +24,36 @@
                 <h2 style="text-align: center;font-family: K2D;">LEFT EAR BUD</h2>
                 <hr style="background-color:black;width:100%;">
                 <ul>
-                    <li><span>Signal-to-Noise Ratio (SNR)</span>           :  {{}} dB </li>
-                    <li><span>Total Harmonic Distortion (THD)</span>       :  {{}} dB  </li>
-                    <li><span>Frequency Response Deviation (FRD)</span>    :  {{}}</li>
-                    <li><span>loudness</span>                              :  {{}} dB</li>
-                    <li><span>sharpness</span>                             :  {{}}</li>
-                    <li><span>Mean Opinion Score (MOS)</span>              :  {{}}</li>
+                    {% if "error" in metky0 %}
+                    <li><span>ERROR</span>                                 :  {{mt[0]['error']}}  </li>
+                    {% else %}
+                    <li><span>Signal-to-Noise Ratio (SNR)</span>           :  {{mt[0]['snr(dB)']}} dB </li>
+                    <li><span>Total Harmonic Distortion (THD)</span>       :  {{mt[0]['thd(dB)']}} dB  </li>
+                    <li><span>Frequency Response Deviation (FRD)</span>    :  {{mt[0]['frd(No Unit)']}}</li>
+                    <li><span>loudness</span>                              :  {{mt[0]['loudness(dB)']}} dB</li>
+                    <li><span>sharpness</span>                             :  {{mt[0]['sharpness(No Unit)']}}</li>
+                    <li><span>Mean Opinion Score (MOS)</span>              :  {{mt[0]['mos']}}</li>
+                    {%endif%}
                 </ul>
                 <a href="">DOWNLOAD LEFT.wav</a>
             </div>
             <div class="rg tm">
                 <h2 style="text-align: center;font-family: K2D;">RIGHT EAR BUD</h2>
                 <hr style="background-color:black;width:100%;">
-                <ul>
-                    <li><span>Signal-to-Noise Ratio (SNR)</span>           :  {{}} dB </li>
-                    <li><span>Total Harmonic Distortion (THD)</span>       :  {{}} dB  </li>
-                    <li><span>Frequency Response Deviation (FRD)</span>    :  {{}}</li>
-                    <li><span>loudness</span>                              :  {{}} dB</li>
-                    <li><span>sharpness</span>                             :  {{}}</li>
-                    <li><span>Mean Opinion Score (MOS)</span>              :  {{}}</li>
-                </ul>
+                {% if "error" in metky1 %}
+                <li><span>ERROR</span>                                 :  {{mt[1]['error']}}  </li>
+                {% else %}
+                <li><span>Signal-to-Noise Ratio (SNR)</span>           :  {{mt[1]['snr(dB)']}} dB </li>
+                <li><span>Total Harmonic Distortion (THD)</span>       :  {{mt[1]['thd(dB)']}} dB  </li>
+                <li><span>Frequency Response Deviation (FRD)</span>    :  {{mt[1]['frd(No Unit)']}}</li>
+                <li><span>loudness</span>                              :  {{mt[1]['loudness(dB)']}} dB</li>
+                <li><span>sharpness</span>                             :  {{mt[1]['sharpness(No Unit)']}}</li>
+                <li><span>Mean Opinion Score (MOS)</span>              :  {{mt[1]['mos']}}</li>
+                {%endif%}
                 <a href="">DOWNLOAD RIGHT.wav</a>
             </div>
         </div>
-    <a href="" class="backbtn">BACK</a>
+    <a href="{{url_for('audio')}}" class="backbtn">BACK</a>
 
 </body>
 <script src="static/script.js"></script>

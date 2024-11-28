@@ -12,9 +12,9 @@
         <a href="" onclick="closeApp()"> &#128473;&#xFE0E;</a>
     </div>
     <div class="topbar">
-        <a href="">HOME</a>
-        <a href="">AUDIO QUALITY</a>
-        <a href="">RECORD EVENT</a>
+        <a href="{{url_for('home')}}">HOME</a>
+        <a href="{{url_for('audio')}}">AUDIO QUALITY</a>
+        <a href="{{url_for('event_log')}}">RECORD EVENT</a>
     </div>
     <div class="song" >
         <p >CURRENT SONG : {{sn}}</p>

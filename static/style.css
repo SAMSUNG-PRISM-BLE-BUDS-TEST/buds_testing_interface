@@ -93,7 +93,7 @@ body{
     margin: 30px;
     display: flex;
     flex-direction: column-reverse;
-    scroll-snap-type: proximity;
+    overflow: scroll;
 }
 td,th{
     padding:10px;
@@ -103,7 +103,6 @@ td,th{
 }
 
 .msgd{
-    overflow-y: scroll;
     height:80vh;
     display: flex;
     flex-direction: column;

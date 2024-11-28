@@ -9,8 +9,6 @@ import sounddevice as sd
 import wavio as wv
 import librosa
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy.signal import find_peaks
 
 app = Flask(__name__)
 #change paniko da
@@ -26,7 +24,7 @@ stcl=0
 #log events array
 le=[]
 @app.route('/', methods=["GET","POST"])
-def main_func():    
+def home():    
     a=ble_status()
     if (a=="Device is not connect"):
         bgclr="red"
@@ -116,6 +114,7 @@ def touchtest():
 @app.route('/sttest', methods=["GET","POST"])
 def sttest():
     a=single_tap()
+    global stbg, stc, stw
     if (a=="Single tap is not working"):
         stbg="red"
         stc="white"
@@ -183,8 +182,8 @@ def get_connection_value():
 
 @app.route('/event_log')
 def event_log():
-    if (len(le)):
-        eventar=le
+    if len(le) > 1:
+        eventar=le[1::]
     else:
         eventar=[[" ","NO EVENTS YET"]]
     
@@ -202,7 +201,7 @@ def event_log():
             pdf.cell(col_widths[i], 10, str(col), 1)
         pdf.ln()
     pdf.output('log_file.pdf')
-    
+    print(le)
     return render_template("event_log.html",le=eventar)
  
  
@@ -384,20 +383,24 @@ def metrics():
             })
         except Exception as e:
             metrics.append({'file': file, 'error': str(e)})
+    metky0=list(metrics[0].keys())
+    metky1=list(metrics[1].keys())
+    
+    return render_template("metrics_out.html",mt=metrics,metky0=metky0,metky1=metky1)
 
-    return render_template("metrics_out.html")
 
-@app.route('/devices', methods=['GET'])
-def devices():
-    """Get list of available devices"""
-    devices = sd.query_devices()
-    return devices
-
-@app.route('/audio',method=['GET'])
+@app.route('/audio', methods=['GET'])
 def audio():
-    d=devices()
-    erf=""
-    return render_template("audio.html",devices=d,erf=erf)
+    try:
+        d = sd.query_devices() 
+    except Exception as e:
+        d = []
+        erf = f"Error fetching devices: {e}"
+        return render_template("audio.html", devices=d, erf=erf)
+
+    erf = ""
+    return render_template("audio.html", devices=d, erf=erf)
+
 def run_flask():
     app.run(debug=True, use_reloader=False)
 

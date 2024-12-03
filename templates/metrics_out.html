@@ -35,11 +35,12 @@
                     <li><span>Mean Opinion Score (MOS)</span>              :  {{mt[0]['mos']}}</li>
                     {%endif%}
                 </ul>
-                <a href="">DOWNLOAD LEFT.wav</a>
+                <a  href="{{ url_for('download_left_file') }}" >DOWNLOAD LEFT WAV</a>
             </div>
             <div class="rg tm">
                 <h2 style="text-align: center;font-family: K2D;">RIGHT EAR BUD</h2>
                 <hr style="background-color:black;width:100%;">
+                <ul>
                 {% if "error" in metky1 %}
                 <li><span>ERROR</span>                                 :  {{mt[1]['error']}}  </li>
                 {% else %}
@@ -50,11 +51,12 @@
                 <li><span>sharpness</span>                             :  {{mt[1]['sharpness(No Unit)']}}</li>
                 <li><span>Mean Opinion Score (MOS)</span>              :  {{mt[1]['mos']}}</li>
                 {%endif%}
-                <a href="">DOWNLOAD RIGHT.wav</a>
-            </div>
+            </ul>
+            <a  href="{{ url_for('download_right_file') }}" >DOWNLOAD RIGHT WAV</a>
         </div>
-    <a href="{{url_for('audio')}}" class="backbtn">BACK</a>
-
-</body>
-<script src="static/script.js"></script>
-</html>
+        </div>
+        <a href="{{url_for('audio')}}" class="backbtn">BACK</a>
+        
+    </body>
+    <script src="static/script.js"></script>
+    </html>

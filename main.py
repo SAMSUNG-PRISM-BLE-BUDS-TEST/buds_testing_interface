@@ -1,14 +1,16 @@
 from flask import Flask, render_template, redirect, url_for,jsonify, send_file,request
 from mobile_automate import * 
 from datetime import datetime
-from fpdf import FPDF
+# from fpdf import FPDF
 import webview
 import threading 
 import signal,requests,os
-import sounddevice as sd
-import wavio as wv
 import librosa
 import numpy as np
+from openpyxl import Workbook
+from io import BytesIO
+import sounddevice as sd
+import wave
 
 app = Flask(__name__)
 #change paniko da
@@ -180,35 +182,50 @@ def get_connection_value():
     a = ble_status()
     return jsonify({'status': a})
 
+
+
 @app.route('/event_log')
 def event_log():
+    # Check if there are events
     if len(le) > 1:
-        eventar=le[1::]
+        eventar = le[1::]
     else:
-        eventar=[[" ","NO EVENTS YET"]]
-    
-    data = eventar
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    col_widths = [60, 90, 40]
-    # Create table header
-    for i, col in enumerate(data[0]):
-        pdf.cell(col_widths[i], 10, col, 1)
-    pdf.ln()
-    for row in data[1:]:
-        for i, col in enumerate(row):
-            pdf.cell(col_widths[i], 10, str(col), 1)
-        pdf.ln()
-    pdf.output('log_file.pdf')
-    print(le)
-    return render_template("event_log.html",le=eventar)
- 
- 
+        eventar = [[" ", "NO EVENTS YET"]]
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Event Log"
+
+    headers = ["Timestamp", "Event"] 
+
+    ws.append(headers)
+
+    for row in eventar:
+        ws.append(row)
+
+    excel_file = BytesIO()
+    wb.save(excel_file)
+    excel_file.seek(0)  
+
+    with open('log_file.xlsx', 'wb') as f:
+        f.write(excel_file.read())
+
+    return render_template("event_log.html", le=eventar)
+
+
 @app.route('/download_log_file')
 def download_log_file():
-    # Serve the PDF file for download
-    return send_file('log_file.pdf', as_attachment=True)
+    return send_file('log_file.xlsx', as_attachment=True)
+
+
+@app.route('/download_left_file')
+def download_left_file():
+    return send_file('device1_recording.wav', as_attachment=True)
+
+
+@app.route('/download_right_file')
+def download_right_file():
+    return send_file('device2_recording.wav', as_attachment=True)
 
 class Api:
     def close_window(self):
@@ -237,8 +254,8 @@ def on_window_close():
     
 #AUDIO QUALITY TESTING
 
-RECORDING_FILE1 = "RIGHT.wav"
-RECORDING_FILE2 = "LEFT.wav"
+RECORDING_FILE1 = 'device1_recording.wav'
+RECORDING_FILE2 = 'device2_recording.wav'
 
 default_weights = {'snr': 0.2, 'thd': 0.25, 'frd': 0.15, 'loudness': 0.2, 'sharpness': 0.2}
 
@@ -246,37 +263,30 @@ def load_audio(file_path: str) -> tuple:
     """Load audio file"""
     return librosa.load(file_path, sr=None)
 
-def record_audio(duration: int, device1_idx: int, device2_idx: int,
-                 frequency1: int = 16000, frequency2: int = 16000,
-                 channels1: int = 2, channels2: int = 2) -> None:
-    """Record audio from two devices with separate frequency and channel settings."""
+def record_audio(duration, device1_idx, device2_idx, frequency1, frequency2, channels1, channels2):
     try:
-        # Allocate buffers for each device's recording
-        recording1 = np.empty((int(duration * frequency1), channels1), dtype=np.float32)
-        recording2 = np.empty((int(duration * frequency2), channels2), dtype=np.float32)
+        # Record audio from both devices using the non-blocking API
+        audio1 = sd.rec(int(duration * frequency1), device=device1_idx, samplerate=frequency1, channels=channels1, dtype='float32')
+        audio2 = sd.rec(int(duration * frequency2), device=device2_idx, samplerate=frequency2, channels=channels2, dtype='float32')
+        sd.wait()  # Wait for both recordings to finish
 
-        # Create input streams for both devices
-        with sd.InputStream(device=device1_idx, samplerate=frequency1, channels=channels1) as stream1, \
-             sd.InputStream(device=device2_idx, samplerate=frequency2, channels=channels2) as stream2:
-
-            # Record audio from both devices
-            for i in range(0, int(duration * min(frequency1, frequency2)), min(frequency1, frequency2) // 10):
-                if i < len(recording1):
-                    recording1[i:i + frequency1 // 10] = stream1.read(frequency1 // 10)[0]
-                if i < len(recording2):
-                    recording2[i:i + frequency2 // 10] = stream2.read(frequency2 // 10)[0]
-
-        # Normalize and convert to int16 for both recordings
-        recording1 = np.int16(recording1 / np.max(np.abs(recording1)) * 32767)
-        recording2 = np.int16(recording2 / np.max(np.abs(recording2)) * 32767)
-
-        # Save recordings as WAV files
-        wv.write(RECORDING_FILE1, recording1, frequency1, sampwidth=2)
-        wv.write(RECORDING_FILE2, recording2, frequency2, sampwidth=2)
+        # Save audio as WAV files
+        save_audio(audio1, 'device1_recording.wav', frequency1, channels1)
+        save_audio(audio2, 'device2_recording.wav', frequency2, channels2)
 
     except Exception as e:
-        print(f"Error recording audio: {e}")
-        raise
+        raise Exception(f"Error during audio recording: {str(e)}")
+
+def save_audio(frames, filename, frequency, channels):
+    """Save the recorded audio as a WAV file."""
+    with wave.open(filename, 'wb') as wf:
+        wf.setnchannels(channels)
+        wf.setsampwidth(4)  # 4 bytes for float32
+        wf.setframerate(frequency)
+
+        # Convert the frames to a byte array and write to the file
+        wf.writeframes(frames.tobytes())  # Convert numpy array to bytes
+
 
 def analyze_snr(audio: np.ndarray, sr: int) -> float:
     """Calculate signal-to-noise ratio using spectral analysis"""
@@ -323,18 +333,19 @@ def calculate_mos(snr, thd, frd, loudness, sharpness, weights):
            weights['sharpness'] * sharpness)
     return round(mos * 5, 2)
 
-@app.route('/record', methods=['GET','POST'])
+@app.route('/record', methods=['POST'])
 def record():
     """Record audio from two devices with separate frequency and channel settings."""
     data = request.json
-    # Get user inputs with default values
-    duration = data.get('duration', 5)  # Default to 5 seconds
+    
+    # Extract user inputs with default values
+    duration = int(data.get('duration', 5))  # Default to 5 seconds
     device1_name = data.get('device1_name')
     device2_name = data.get('device2_name')
-    frequency1 = data.get('frequency1', 16000)  # Default to 16kHz for device 1
-    frequency2 = data.get('frequency2', 16000)  # Default to 16kHz for device 2
-    channels1 = data.get('channels1', 2)  # Default to 2 (stereo) for device 1
-    channels2 = data.get('channels2', 2)  # Default to 2 (stereo) for device 2
+    frequency1 = int(data.get('frequency1', 16000))  # Default to 16kHz for device 1
+    frequency2 = int(data.get('frequency2', 16000))  # Default to 16kHz for device 2
+    channels1 = int(data.get('channels1', 2))  # Default to 2 (stereo) for device 1
+    channels2 = int(data.get('channels2', 2))  # Default to 2 (stereo) for device 2
 
     # Validate device indices
     device_indices = {device['name']: i for i, device in enumerate(sd.query_devices())}
@@ -342,22 +353,16 @@ def record():
     device2_idx = device_indices.get(device2_name)
 
     if device1_idx is None or device2_idx is None:
-        erf="ERROR DEVICE NOT FOUND"
-        #return jsonify({'error': 'Device not found'}), 400
-        return render_template("audio.html",erf=erf,devices=d)
+        return jsonify({'error': 'One or both devices not found'}), 400
 
     # Record audio
     try:
         record_audio(duration, device1_idx, device2_idx, frequency1, frequency2, channels1, channels2)
-        #return jsonify({'message': 'Recording successful'}), 200
-        erf="RECORDING SUCCESSFUL"
-        return render_template("audio.html",devices=d,erf=erf)
+        return jsonify({'message': 'Recording successful'}), 200
 
     except Exception as e:
-        erf=str(e)
-        return render_template("audio.html",devices=d,erf=erf)
-        #return jsonify({'error': str(e)}), 400
-
+        return jsonify({'error': str(e)}), 500  # Always return JSON on errors
+    
 @app.route('/metrics', methods=['GET'])
 def metrics():
     """Get metrics for recorded audio files"""

@@ -11,6 +11,7 @@ from openpyxl import Workbook
 from io import BytesIO
 import sounddevice as sd
 import wave
+import winsound
 
 app = Flask(__name__)
 #change paniko da
@@ -359,7 +360,7 @@ def record():
     try:
         record_audio(duration, device1_idx, device2_idx, frequency1, frequency2, channels1, channels2)
         return jsonify({'message': 'Recording successful'}), 200
-
+    
     except Exception as e:
         return jsonify({'error': str(e)}), 500  # Always return JSON on errors
     
